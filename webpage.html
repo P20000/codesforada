@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    ### Insertion Sort
+    ```python
+    def insertion_sort(nums):
+    for i in range(1, len(nums)):
+    key = nums[i]
+    j = i - 1
+    while j >= 0 and nums[j] > key:
+    nums[j + 1] = nums[j]
+    j -= 1
+    nums[j + 1] = key
+    ```
+
+    ### Heap Sort
+    ```python
+    def heapify(nums, n, i):
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+
+    if left < n and nums[left]> nums[largest]:
+        largest = left
+        if right < n and nums[right]> nums[largest]:
+            largest = right
+
+            if largest != i:
+            nums[i], nums[largest] = nums[largest], nums[i]
+            heapify(nums, n, largest)
+
+            def heap_sort(nums):
+            n = len(nums)
+            for i in range(n // 2 - 1, -1, -1):
+            heapify(nums, n, i)
+            for i in range(n - 1, 0, -1):
+            nums[0], nums[i] = nums[i], nums[0]
+            heapify(nums, i, 0)
+            ```
+
+            ### Performance Profiling
+            ```python
+            import time
+            import random
+
+            def profile(sizes):
+            for n in sizes:
+            base = [random.randint(0, 10000) for _ in range(n)]
+
+            # Test Insertion Sort
+            list1 = base[:]
+            start = time.perf_counter()
+            insertion_sort(list1)
+            t_ins = time.perf_counter() - start
+
+            # Test Heap Sort
+            list2 = base[:]
+            start = time.perf_counter()
+            heap_sort(list2)
+            t_heap = time.perf_counter() - start
+
+            print(f"N={n} | Insertion: {t_ins:.5f}s | Heap: {t_heap:.5f}s")
+
+            sizes = [100, 500, 1000, 2000]
+            profile(sizes)
+            ```
+
+            # recursive binary search
+
+            import random
+            import time
+
+            def search(nums, goal, start, end):
+            if start > end:
+            return -1
+
+            mid = (start + end) // 2
+
+            if nums[mid] == goal:
+            return mid
+            if nums[mid] > goal:
+            return search(nums, goal, start, mid - 1)
+            return search(nums, goal, mid + 1, end)
+
+            # Performance test
+            sizes = [100, 1000, 10000, 100000]
+
+            for n in sizes:
+            data = sorted(random.sample(range(n * 10), n))
+            target = random.choice(data)
+
+            t1 = time.perf_counter()
+            search(data, target, 0, n - 1)
+            t2 = time.perf_counter()
+
+            print(f"Size {n}: {t2 - t1:.8f}s")
+
+            #graph traversal using BFS
+
+            def bfs(graph, start):
+            seen = {start}
+            queue = [start]
+            order = []
+
+            while queue:
+            curr = queue.pop(0)
+            order.append(curr)
+
+            for neighbor in graph.get(curr, []):
+            if neighbor not in seen:
+            seen.add(neighbor)
+            queue.append(neighbor)
+
+            return order
+
+            graph = {
+            0: [1, 2],
+            1: [3],
+            2: [1, 3],
+            3: []
+            }
+
+            print(f"Order: {bfs(graph, 0)}")
+
+            #graph traversal using DFS
+
+            def dfs(graph, node, seen, order):
+            seen.add(node)
+            order.append(node)
+            for neighbor in graph.get(node, []):
+            if neighbor not in seen:
+            dfs(graph, neighbor, seen, order)
+            return order
+
+            graph = {
+            0: [1, 2],
+            1: [3],
+            2: [1, 3],
+            3: []
+            }
+
+            result = dfs(graph, 0, set(), [])
+            print(f"Order: {result}")
+
+            # dijkstra for shortest path
+
+            def dijkstra(graph, start):
+            dist = {v: float('inf') for v in graph}
+            dist[start] = 0
+            visited = set()
+            nodes = list(graph.keys())
+            while len(visited) < len(nodes): curr=None min_d=float('inf') for n in nodes: if n not in visited and
+                dist[n] < min_d: min_d=dist[n] curr=n if curr is None: break visited.add(curr) for v, weight in
+                graph[curr]: new_dist=dist[curr] + weight if new_dist < dist[v]: dist[v]=new_dist return dist graph={ 0:
+                [(1, 4), (2, 1)], 1: [(3, 1)], 2: [(1, 2), (3, 5)], 3: [] } results=dijkstra(graph, 0)
+                print(f"Distances: {results}") #minimum cost tree spanning def find_mst(graph, start):
+                nodes=list(graph.keys()) mst_edges=[] total_cost=0 visited={start} while len(visited) < len(nodes):
+                cheapest_edge=None min_weight=float('inf') for u in visited: for v, weight in graph[u]: if v not in
+                visited: if weight < min_weight: min_weight=weight cheapest_edge=(u, v, weight) if cheapest_edge: u, v,
+                w=cheapest_edge visited.add(v) mst_edges.append((u, v, w)) total_cost +=w return mst_edges, total_cost
+                graph={ 0: [(1, 2), (3, 6)], 1: [(0, 2), (2, 3), (3, 8), (4, 5)], 2: [(1, 3), (4, 7)], 3: [(0, 6), (1,
+                8)], 4: [(1, 5), (2, 7)], } edges, cost=find_mst(graph, 0) print(f"Edges: {edges}\nCost: {cost}") #
+                using divide and conquer for finding maximum and minimum def find_extremes(numbers, start, end): if
+                start==end: return numbers[start], numbers[start] if end==start + 1: first, second=numbers[start],
+                numbers[end] return (first, second) if first < second else (second, first) middle=(start + end) // 2
+                left_min, left_max=find_extremes(numbers, start, middle) right_min, right_max=find_extremes(numbers,
+                middle + 1, end) return min(left_min, right_min), max(left_max, right_max) arr=[11,9,8,17,6,5,4,3,2,1]
+                smallest, biggest=find_extremes(arr, 0, len(arr)-1) print(f"{smallest} {biggest}") quick sort def
+                partition(A, low, high): pivot=A[high] i=low - 1 for j in range(low, high): if A[j] <=pivot: i +=1 A[i],
+                A[j]=A[j], A[i] A[i + 1], A[high]=A[high], A[i + 1] return i + 1 def quick_sort(A, low, high): if low <
+                high: pi=partition(A, low, high) quick_sort(A, low, pi - 1) quick_sort(A, pi + 1, high) # Example usage
+                arr=[10, 7, 8, 9, 1, 5] quick_sort(arr, 0, len(arr) - 1) print("Sorted array:", arr) </body>
+
+</html>
