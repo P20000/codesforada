@@ -124,8 +124,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Python Algorithms</h1>
-            <p class="subtitle">A curated collection of essential data structures and algorithms</p>
+            <h1>Code Library</h1>
+            <p class="subtitle">A curated collection of essential programs and algorithms</p>
         </header>
 
         <main id="algorithms-container">
@@ -134,38 +134,71 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('algorithms.json')
-                .then(response => response.json())
-                .then(data => {
+            // Fetch the markdown file directly
+            // Note: You can change the filename here if you rename your .md file
+            fetch('C code.md')
+                .then(response => response.text())
+                .then(text => {
                     const container = document.getElementById('algorithms-container');
-                    data.forEach(algo => {
-                        const section = document.createElement('section');
-                        section.className = 'algorithm-card';
+                    
+                    // Split the markdown by H3 headers (###)
+                    const chunks = text.split(/(?:^|\n)### /).filter(c => c.trim().length > 0);
+                    
+                    chunks.forEach(chunk => {
+                        const lines = chunk.split('\n');
+                        const title = lines[0].trim();
                         
-                        const h2 = document.createElement('h2');
-                        h2.textContent = algo.title;
+                        // Extract everything after the title
+                        const rest = lines.slice(1).join('\n');
                         
-                        const pre = document.createElement('pre');
-                        const code = document.createElement('code');
-                        code.className = 'language-python';
-                        code.textContent = algo.code;
-                        
-                        pre.appendChild(code);
-                        section.appendChild(h2);
-                        section.appendChild(pre);
-                        
-                        container.appendChild(section);
+                        // Use regex to match the code block and its language
+                        const codeMatch = rest.match(/```(\w+)?\n([\s\S]*?)```/);
+                        if (codeMatch) {
+                            const lang = codeMatch[1] || 'plaintext';
+                            const code = codeMatch[2].trim();
+                            
+                            // Extract description (text before the code block)
+                            const desc = rest.split(/```/)[0].trim();
+                            
+                            // Build the UI elements for the card
+                            const section = document.createElement('section');
+                            section.className = 'algorithm-card';
+                            
+                            const h2 = document.createElement('h2');
+                            h2.textContent = title;
+                            section.appendChild(h2);
+                            
+                            // Add description if it exists
+                            if (desc) {
+                                const p = document.createElement('p');
+                                p.style.color = '#94a3b8';
+                                p.style.marginBottom = '1.5rem';
+                                p.textContent = desc;
+                                section.appendChild(p);
+                            }
+                            
+                            const pre = document.createElement('pre');
+                            const codeEl = document.createElement('code');
+                            // Map generic 'c' or 'cpp' to Prism's language classes
+                            codeEl.className = 'language-' + lang;
+                            codeEl.textContent = code;
+                            
+                            pre.appendChild(codeEl);
+                            section.appendChild(pre);
+                            
+                            container.appendChild(section);
+                        }
                     });
                     
-                    // Re-highlight since code was added dynamically
+                    // Apply syntax highlighting to the newly added elements
                     if (window.Prism) {
                         Prism.highlightAll();
                     }
                 })
-                .catch(err => console.error('Error loading algorithms:', err));
+                .catch(err => console.error('Error loading markdown file:', err));
         });
     </script>
 </body>
