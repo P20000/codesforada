@@ -1,5 +1,4 @@
 ### 1. Introduction to OS (Process Creation via Fork)
-*Note: Turbo C++ does not support true OS forks. This is a conceptual simulation to allow compilation.*
 ```c
 #include <stdio.h>
 #include <conio.h>
