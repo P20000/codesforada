@@ -6,7 +6,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "C code.md",
+      "src": "code.md",
       "use": "@vercel/static"
     }
   ]
